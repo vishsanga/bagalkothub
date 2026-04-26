@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+#lovable-badge {
+  display: none !important;
+}
+
 /* Bagalkot City Hub — Design System
  * Dark navy + gold + glassmorphism. All colors in HSL.
  */
