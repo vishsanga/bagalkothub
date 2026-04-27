@@ -7,74 +7,76 @@
 }
 
 /* Bagalkot City Hub — Design System
- * Dark navy + gold + glassmorphism. All colors in HSL.
+ * Light editorial theme. Cream background, deep navy text, gold accents.
+ * Newspaper-style typography: Playfair Display headlines, Source Sans 3 body, Source Serif 4 longform.
+ * All colors in HSL.
  */
 
 @layer base {
   :root {
-    /* Core surfaces */
-    --background: 222 55% 8%;             /* deep navy #0A1633 */
-    --background-elevated: 222 50% 12%;   /* slightly lifted navy */
-    --foreground: 40 30% 96%;             /* warm white */
+    /* Core surfaces — light editorial */
+    --background: 40 30% 98%;             /* warm off-white #FBF9F4 */
+    --background-elevated: 0 0% 100%;     /* pure white cards */
+    --foreground: 222 47% 14%;            /* deep navy ink */
 
-    --card: 222 50% 11%;
-    --card-foreground: 40 30% 96%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 14%;
 
-    --popover: 222 50% 11%;
-    --popover-foreground: 40 30% 96%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 14%;
 
     /* Brand */
-    --primary: 222 70% 22%;               /* navy primary */
-    --primary-foreground: 40 30% 96%;
+    --primary: 222 60% 18%;               /* deep navy */
+    --primary-foreground: 40 30% 98%;
 
-    --gold: 43 65% 53%;                   /* #D4AF37 */
-    --gold-soft: 42 80% 70%;              /* #F1C76A */
-    --gold-foreground: 222 60% 10%;
+    --gold: 38 70% 45%;                   /* richer gold readable on light */
+    --gold-soft: 42 80% 60%;
+    --gold-foreground: 0 0% 100%;
 
-    --secondary: 222 40% 18%;
-    --secondary-foreground: 40 30% 96%;
+    --secondary: 40 20% 94%;              /* soft cream */
+    --secondary-foreground: 222 47% 14%;
 
-    --muted: 222 30% 20%;
-    --muted-foreground: 220 15% 70%;
+    --muted: 40 18% 92%;
+    --muted-foreground: 222 15% 38%;      /* readable secondary text */
 
-    --accent: 43 65% 53%;                 /* gold accent */
-    --accent-foreground: 222 60% 10%;
+    --accent: 38 70% 45%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 75% 55%;
-    --destructive-foreground: 40 30% 96%;
+    --destructive: 0 72% 48%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 222 30% 22%;
-    --input: 222 35% 16%;
-    --ring: 43 65% 53%;
+    --border: 40 15% 86%;
+    --input: 40 20% 96%;
+    --ring: 38 70% 45%;
 
     --radius: 1rem;
 
-    /* Glass tokens */
-    --glass-bg: 222 50% 14% / 0.55;
-    --glass-bg-strong: 222 50% 14% / 0.78;
-    --glass-border: 40 30% 96% / 0.12;
-    --glass-border-strong: 43 65% 53% / 0.35;
+    /* Glass tokens — subtle on light */
+    --glass-bg: 0 0% 100% / 0.65;
+    --glass-bg-strong: 0 0% 100% / 0.85;
+    --glass-border: 222 30% 14% / 0.08;
+    --glass-border-strong: 38 70% 45% / 0.4;
 
     /* Gradients */
-    --gradient-hero: linear-gradient(180deg, hsl(222 60% 6% / 0.35) 0%, hsl(222 60% 6% / 0.85) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(40 30% 98% / 0.1) 0%, hsl(40 30% 98% / 0.7) 75%, hsl(40 30% 98%) 100%);
     --gradient-gold: linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(var(--gold-soft)) 100%);
-    --gradient-navy: linear-gradient(180deg, hsl(222 55% 8%) 0%, hsl(222 50% 12%) 100%);
-    --gradient-glow: radial-gradient(60% 60% at 50% 0%, hsl(var(--gold) / 0.18) 0%, transparent 70%);
+    --gradient-cream: linear-gradient(180deg, hsl(40 30% 98%) 0%, hsl(40 25% 95%) 100%);
+    --gradient-glow: radial-gradient(60% 60% at 50% 0%, hsl(var(--gold) / 0.08) 0%, transparent 70%);
 
-    /* Shadows */
-    --shadow-glass: 0 8px 32px -8px hsl(222 80% 4% / 0.5), 0 2px 8px hsl(222 80% 4% / 0.3);
-    --shadow-gold: 0 12px 40px -12px hsl(var(--gold) / 0.45);
-    --shadow-elegant: 0 20px 60px -20px hsl(222 80% 4% / 0.6);
+    /* Shadows — soft, paper-like */
+    --shadow-glass: 0 4px 20px -4px hsl(222 40% 14% / 0.08), 0 1px 3px hsl(222 40% 14% / 0.04);
+    --shadow-gold: 0 10px 30px -10px hsl(var(--gold) / 0.45);
+    --shadow-elegant: 0 14px 40px -16px hsl(222 40% 14% / 0.18);
 
     /* Sidebar (kept for shadcn compat) */
-    --sidebar-background: 222 50% 10%;
-    --sidebar-foreground: 40 30% 96%;
-    --sidebar-primary: 43 65% 53%;
-    --sidebar-primary-foreground: 222 60% 10%;
-    --sidebar-accent: 222 40% 16%;
-    --sidebar-accent-foreground: 40 30% 96%;
-    --sidebar-border: 222 30% 22%;
-    --sidebar-ring: 43 65% 53%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 14%;
+    --sidebar-primary: 38 70% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 40 20% 94%;
+    --sidebar-accent-foreground: 222 47% 14%;
+    --sidebar-border: 40 15% 86%;
+    --sidebar-ring: 38 70% 45%;
   }
 }
 
@@ -89,19 +91,30 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-feature-settings: "ss01", "cv11";
+    font-family: 'Source Sans 3', 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "ss01";
     background-image: var(--gradient-glow);
     background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
   }
 
   h1, h2, h3, h4, h5 {
     font-family: 'Playfair Display', Georgia, serif;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
+    color: hsl(var(--foreground));
+  }
+
+  /* Newspaper-style longform copy uses serif for body */
+  .prose-news p,
+  .prose-news li {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: hsl(var(--foreground) / 0.85);
   }
 
   ::selection {
-    background: hsl(var(--gold) / 0.35);
+    background: hsl(var(--gold) / 0.3);
     color: hsl(var(--foreground));
   }
 }
@@ -109,16 +122,16 @@
 @layer components {
   .glass {
     background: hsl(var(--glass-bg));
-    backdrop-filter: blur(20px) saturate(140%);
-    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
     border: 1px solid hsl(var(--glass-border));
     box-shadow: var(--shadow-glass);
   }
 
   .glass-strong {
     background: hsl(var(--glass-bg-strong));
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
     border: 1px solid hsl(var(--glass-border));
     box-shadow: var(--shadow-elegant);
   }
@@ -135,13 +148,13 @@
   }
   .hover-lift:hover {
     transform: translateY(-6px);
-    box-shadow: var(--shadow-gold);
+    box-shadow: var(--shadow-elegant);
     border-color: hsl(var(--glass-border-strong));
   }
 
   .nav-link {
     position: relative;
-    @apply text-foreground/80 hover:text-foreground transition-colors;
+    @apply text-foreground/75 hover:text-foreground transition-colors;
   }
   .nav-link::after {
     content: '';
@@ -169,5 +182,11 @@
   .reveal.is-visible {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* Editorial divider */
+  .rule-gold {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(var(--gold) / 0.5), transparent);
   }
 }

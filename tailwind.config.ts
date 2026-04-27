@@ -15,7 +15,8 @@ export default {
     extend: {
       fontFamily: {
         display: ['"Playfair Display"', "Georgia", "serif"],
-        sans: ["Inter", "system-ui", "sans-serif"],
+        serif: ['"Source Serif 4"', "Georgia", "serif"],
+        sans: ['"Source Sans 3"', "Inter", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -71,7 +72,7 @@ export default {
       backgroundImage: {
         "gradient-gold": "var(--gradient-gold)",
         "gradient-hero": "var(--gradient-hero)",
-        "gradient-navy": "var(--gradient-navy)",
+        "gradient-cream": "var(--gradient-cream)",
       },
       boxShadow: {
         glass: "var(--shadow-glass)",
