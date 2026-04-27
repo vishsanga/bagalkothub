@@ -46,23 +46,26 @@ export const Footer = () => {
           <div>
             <h4 className="font-display text-base text-foreground mb-4">Quick Links</h4>
             <ul className="flex flex-col gap-2.5">
-              <li><a href="#home" className={linkCls}>Home</a></li>
-              <li><a href="#categories" className={linkCls}>Categories</a></li>
-              <li><a href="#featured" className={linkCls}>Featured</a></li>
-              <li><a href="#news" className={linkCls}>Updates</a></li>
-              <li><a href="#submit" className={linkCls}>List Business</a></li>
+              <li><a href="/#home" className={linkCls}>Home</a></li>
+              <li><a href="/#categories" className={linkCls}>Categories</a></li>
+              <li><a href="/#talukas" className={linkCls}>Talukas</a></li>
+              <li><a href="/#featured" className={linkCls}>Featured</a></li>
+              <li><a href="/#news" className={linkCls}>Updates</a></li>
+              <li><a href="/#submit" className={linkCls}>List Business</a></li>
             </ul>
           </div>
 
-          {/* Categories */}
+          {/* Talukas */}
           <div>
-            <h4 className="font-display text-base text-foreground mb-4">Categories</h4>
-            <ul className="flex flex-col gap-2.5">
-              <li><a href="#categories" className={linkCls}>Restaurants</a></li>
-              <li><a href="#categories" className={linkCls}>Gyms</a></li>
-              <li><a href="#categories" className={linkCls}>Services</a></li>
-              <li><a href="#categories" className={linkCls}>Jobs</a></li>
-              <li><a href="#categories" className={linkCls}>Events</a></li>
+            <h4 className="font-display text-base text-foreground mb-4">Talukas</h4>
+            <ul className="grid grid-cols-2 gap-x-3 gap-y-2.5">
+              {TALUKAS.map((t) => (
+                <li key={t.slug}>
+                  <Link to={`/taluka/${t.slug}`} className={linkCls}>
+                    {t.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
