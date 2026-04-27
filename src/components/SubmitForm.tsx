@@ -70,8 +70,8 @@ export const SubmitForm = () => {
   };
 
   return (
-    <section id="submit" className="py-20 md:py-28 bg-gradient-navy relative">
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+    <section id="submit" className="py-20 md:py-28 bg-gradient-cream relative">
+      <div className="absolute inset-x-0 top-0 rule-gold" />
       <div className="container grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
         {/* Pitch */}
         <div ref={ref} className="reveal flex flex-col gap-6 lg:sticky lg:top-28">
