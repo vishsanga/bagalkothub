@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { Categories } from "@/components/Categories";
+import { Talukas } from "@/components/Talukas";
 import { FeaturedListings } from "@/components/FeaturedListings";
 import { News } from "@/components/News";
 import { SubmitForm } from "@/components/SubmitForm";
@@ -28,6 +29,7 @@ const Index = () => {
         onSearch={onSearch}
       />
       <Categories />
+      <Talukas />
       <FeaturedListings query={query} area={area} />
       <News />
       <SubmitForm />
