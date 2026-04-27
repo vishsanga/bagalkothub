@@ -21,8 +21,8 @@ export const FeaturedListings = ({ query, area }: Props) => {
   }, [query, area]);
 
   return (
-    <section id="featured" className="py-20 md:py-28 bg-gradient-navy relative">
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+    <section id="featured" className="py-20 md:py-28 bg-gradient-cream relative">
+      <div className="absolute inset-x-0 top-0 rule-gold" />
       <div className="container">
         <SectionHeading
           eyebrow="Handpicked"

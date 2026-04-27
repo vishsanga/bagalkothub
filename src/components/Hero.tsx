@@ -25,7 +25,7 @@ export const Hero = ({ query, area, onQueryChange, onAreaChange, onSearch }: Pro
           height={1080}
         />
         <div className="absolute inset-0 bg-gradient-hero" />
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-background to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-background via-background/70 to-transparent" />
       </div>
 
       <div className="container relative">

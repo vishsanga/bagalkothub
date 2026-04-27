@@ -21,7 +21,7 @@ export const ListingCard = ({ listing, delay = 0 }: Props) => {
           height={600}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
         <span className="absolute top-3 left-3 glass-strong text-xs font-medium px-3 py-1.5 rounded-full text-foreground">
           {listing.category}
         </span>
