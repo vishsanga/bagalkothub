@@ -1,4 +1,6 @@
+import { Link } from "react-router-dom";
 import { MapPin, Mail, Phone, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { TALUKAS } from "@/data/talukas";
 
 const linkCls = "text-sm text-muted-foreground hover:text-gold transition-colors";
 
