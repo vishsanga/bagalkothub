@@ -39,18 +39,13 @@ const Index = () => {
       <SponsoredSection />
       <Talukas />
       <PromoCarousel />
-
-      {/* Featured + sidebar ads on XL screens */}
-      <div className="container">
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-8">
-          <div className="min-w-0">
-            <FeaturedListings query={query} area={area} />
-          </div>
-          <SidebarAds />
-        </div>
-      </div>
-
+      <FeaturedListings query={query} area={area} />
       <HomeAdSlot placement="middle" />
+
+      {/* Sidebar layout for News on XL */}
+      <div className="container">
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-8 items-start">
+          <div className="min-w-0">
       <News />
       <SubmitForm />
       <Footer />
