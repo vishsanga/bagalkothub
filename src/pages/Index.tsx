@@ -8,6 +8,12 @@ import { News } from "@/components/News";
 import { SubmitForm } from "@/components/SubmitForm";
 import { Footer } from "@/components/Footer";
 import { type Area } from "@/data/cityData";
+import { HomeAdSlot } from "@/components/ads/HomeAdSlots";
+import { PromoCarousel } from "@/components/ads/PromoCarousel";
+import { SponsoredSection } from "@/components/ads/SponsoredSection";
+import { SidebarAds } from "@/components/ads/SidebarAds";
+import { MobileStickyAd } from "@/components/ads/MobileStickyAd";
+import { PopupAd } from "@/components/ads/PopupAd";
 
 const Index = () => {
   const [query, setQuery] = useState("");
@@ -28,12 +34,29 @@ const Index = () => {
         onAreaChange={setArea}
         onSearch={onSearch}
       />
+      <HomeAdSlot placement="hero" />
       <Categories />
+      <SponsoredSection />
       <Talukas />
+      <PromoCarousel />
       <FeaturedListings query={query} area={area} />
-      <News />
+      <HomeAdSlot placement="middle" />
+
+      {/* News + sidebar ads on XL */}
+      <div className="container">
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-8 items-start">
+          <div className="min-w-0">
+            <News />
+          </div>
+          <SidebarAds />
+        </div>
+      </div>
+
       <SubmitForm />
       <Footer />
+
+      <MobileStickyAd />
+      <PopupAd />
     </main>
   );
 };

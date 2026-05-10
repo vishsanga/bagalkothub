@@ -2,8 +2,11 @@ import { ArrowRight } from "lucide-react";
 import { NEWS } from "@/data/cityData";
 import { SectionHeading } from "./SectionHeading";
 import { useReveal } from "@/hooks/useReveal";
+import { useAds } from "@/hooks/useAds";
+import { AdBanner } from "./ads/AdBanner";
 
 export const News = () => {
+  const { ads } = useAds("news");
   return (
     <section id="news" className="py-20 md:py-28">
       <div className="container">
@@ -18,6 +21,15 @@ export const News = () => {
             <NewsCard key={n.id} item={n} delay={i * 90} />
           ))}
         </div>
+
+        {ads.length > 0 && (
+          <div className="mt-8">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground block mb-3">
+              Advertisement
+            </span>
+            <AdBanner ad={ads[0]} variant="wide" />
+          </div>
+        )}
       </div>
     </section>
   );
