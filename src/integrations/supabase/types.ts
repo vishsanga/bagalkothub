@@ -14,13 +14,155 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ad_analytics: {
+        Row: {
+          ad_id: string
+          created_at: string
+          event_type: string
+          id: string
+          referrer: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          ad_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          ad_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_analytics_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ads: {
+        Row: {
+          clicks: number
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          image_url: string
+          impressions: number
+          is_active: boolean
+          placement: string
+          priority: number
+          redirect_url: string | null
+          start_date: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          clicks?: number
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          image_url: string
+          impressions?: number
+          is_active?: boolean
+          placement?: string
+          priority?: number
+          redirect_url?: string | null
+          start_date?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          clicks?: number
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          image_url?: string
+          impressions?: number
+          is_active?: boolean
+          placement?: string
+          priority?: number
+          redirect_url?: string | null
+          start_date?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sponsored_businesses: {
+        Row: {
+          area: string
+          category: string
+          created_at: string
+          ends_at: string | null
+          id: string
+          image_url: string
+          is_active: boolean
+          name: string
+          priority: number
+          rating: number
+          redirect_url: string | null
+          reviews: number
+          starts_at: string
+          tagline: string | null
+          updated_at: string
+        }
+        Insert: {
+          area: string
+          category: string
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          image_url: string
+          is_active?: boolean
+          name: string
+          priority?: number
+          rating?: number
+          redirect_url?: string | null
+          reviews?: number
+          starts_at?: string
+          tagline?: string | null
+          updated_at?: string
+        }
+        Update: {
+          area?: string
+          category?: string
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          name?: string
+          priority?: number
+          rating?: number
+          redirect_url?: string | null
+          reviews?: number
+          starts_at?: string
+          tagline?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      record_ad_event: {
+        Args: { _ad_id: string; _event: string; _ref?: string; _ua?: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
