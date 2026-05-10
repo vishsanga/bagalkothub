@@ -93,9 +93,11 @@ export const Footer = () => {
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} Bagalkot City Hub. All rights reserved.
           </p>
-          <p className="text-xs text-muted-foreground">
-            Made with <span className="text-gold">★</span> for Bagalkot
-          </p>
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <Link to="/admin" className="hover:text-gold transition-colors">Admin</Link>
+            <span>·</span>
+            <p>Made with <span className="text-gold">★</span> for Bagalkot</p>
+          </div>
         </div>
       </div>
     </footer>
