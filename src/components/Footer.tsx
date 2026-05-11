@@ -94,8 +94,6 @@ export const Footer = () => {
             © {new Date().getFullYear()} Bagalkot City Hub. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <Link to="/admin" className="hover:text-gold transition-colors">Admin</Link>
-            <span>·</span>
             <p>Made with <span className="text-gold">★</span> for Bagalkot</p>
           </div>
         </div>

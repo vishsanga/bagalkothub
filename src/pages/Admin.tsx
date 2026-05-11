@@ -20,14 +20,18 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { PLACEMENT_LABELS, type AdPlacement, type Ad, type SponsoredBusiness } from "@/hooks/useAds";
+import { useAuth } from "@/hooks/useAuth";
+import { LogOut } from "lucide-react";
 
 const PLACEMENTS: AdPlacement[] = ["hero", "middle", "news", "sidebar", "mobile_sticky", "popup", "carousel"];
 
 const Admin = () => {
+  const { user, roles, signOut } = useAuth();
+  const primaryRole = roles[0] ?? "admin";
   return (
     <main className="min-h-screen bg-background">
       <header className="border-b border-border/60 bg-card/50 backdrop-blur sticky top-0 z-30">
-        <div className="container py-4 flex items-center justify-between">
+        <div className="container py-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-4">
             <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
               <ArrowLeft className="h-4 w-4" /> Back to site
@@ -37,7 +41,13 @@ const Admin = () => {
               Admin <span className="gold-text">Console</span>
             </h1>
           </div>
-          <Badge variant="outline" className="border-gold/40 text-gold">Open access (dev)</Badge>
+          <div className="flex items-center gap-3">
+            <Badge variant="outline" className="border-gold/40 text-gold capitalize">{primaryRole.replace("_", " ")}</Badge>
+            <span className="hidden sm:inline text-xs text-muted-foreground">{user?.email}</span>
+            <Button variant="outline" size="sm" onClick={() => signOut()}>
+              <LogOut className="h-4 w-4 mr-2" /> Sign out
+            </Button>
+          </div>
         </div>
       </header>
 
