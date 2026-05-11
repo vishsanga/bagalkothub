@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export type AdPlacement =
@@ -62,6 +62,7 @@ const isLive = (a: Ad) => {
 export function useAds(placement?: AdPlacement) {
   const [ads, setAds] = useState<Ad[]>([]);
   const [loading, setLoading] = useState(true);
+  const instanceId = useId();
 
   useEffect(() => {
     let mounted = true;
@@ -74,15 +75,16 @@ export function useAds(placement?: AdPlacement) {
       setLoading(false);
     };
     load();
+    const channelName = `ads-live:${placement ?? "all"}:${instanceId}`;
     const ch = supabase
-      .channel("ads-live")
+      .channel(channelName)
       .on("postgres_changes", { event: "*", schema: "public", table: "ads" }, load)
       .subscribe();
     return () => {
       mounted = false;
       supabase.removeChannel(ch);
     };
-  }, [placement]);
+  }, [placement, instanceId]);
 
   return { ads, loading };
 }
@@ -90,6 +92,7 @@ export function useAds(placement?: AdPlacement) {
 export function useSponsoredBusinesses() {
   const [items, setItems] = useState<SponsoredBusiness[]>([]);
   const [loading, setLoading] = useState(true);
+  const instanceId = useId();
 
   useEffect(() => {
     let mounted = true;
@@ -111,8 +114,9 @@ export function useSponsoredBusinesses() {
       setLoading(false);
     };
     load();
+    const channelName = `sponsored-live:${instanceId}`;
     const ch = supabase
-      .channel("sponsored-live")
+      .channel(channelName)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "sponsored_businesses" },
@@ -123,7 +127,7 @@ export function useSponsoredBusinesses() {
       mounted = false;
       supabase.removeChannel(ch);
     };
-  }, []);
+  }, [instanceId]);
 
   return { items, loading };
 }
