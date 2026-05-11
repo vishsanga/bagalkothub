@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export type AdPlacement =
@@ -59,32 +59,68 @@ const isLive = (a: Ad) => {
   return true;
 };
 
+let realtimeChannelSequence = 0;
+
+const createRealtimeChannelName = (base: string, scope: string) =>
+  `${base}:${scope}:${Date.now()}:${++realtimeChannelSequence}:${Math.random().toString(36).slice(2)}`;
+
+const removeRealtimeChannel = (channel: ReturnType<typeof supabase.channel> | null) => {
+  if (!channel) return;
+  void supabase.removeChannel(channel).catch((error) => {
+    console.error("Failed to remove realtime channel", error);
+  });
+};
+
 export function useAds(placement?: AdPlacement) {
   const [ads, setAds] = useState<Ad[]>([]);
   const [loading, setLoading] = useState(true);
-  const instanceId = useId();
+  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
 
   useEffect(() => {
-    let mounted = true;
+    let isActive = true;
+
     const load = async () => {
-      let q = supabase.from("ads").select("*").order("priority", { ascending: false });
-      if (placement) q = q.eq("placement", placement);
-      const { data } = await q;
-      if (!mounted) return;
-      setAds(((data ?? []) as Ad[]).filter(isLive));
-      setLoading(false);
+      try {
+        let q = supabase.from("ads").select("*").order("priority", { ascending: false });
+        if (placement) q = q.eq("placement", placement);
+        const { data, error } = await q;
+        if (error) throw error;
+        if (!isActive) return;
+        setAds(((data ?? []) as Ad[]).filter(isLive));
+      } catch (error) {
+        if (isActive) console.error("Failed to load ads", error);
+      } finally {
+        if (isActive) setLoading(false);
+      }
     };
-    load();
-    const channelName = `ads-live:${placement ?? "all"}:${instanceId}`;
-    const ch = supabase
+
+    void load();
+    removeRealtimeChannel(channelRef.current);
+
+    const channelName = createRealtimeChannelName("ads-live", placement ?? "all");
+    const channel = supabase
       .channel(channelName)
-      .on("postgres_changes", { event: "*", schema: "public", table: "ads" }, load)
-      .subscribe();
+      .on(
+        "postgres_changes",
+        placement
+          ? { event: "*", schema: "public", table: "ads", filter: `placement=eq.${placement}` }
+          : { event: "*", schema: "public", table: "ads" },
+        () => void load(),
+      )
+      .subscribe((status, error) => {
+        if (status === "CHANNEL_ERROR" && isActive) {
+          console.error(`Realtime ads channel failed: ${channelName}`, error);
+        }
+      });
+
+    channelRef.current = channel;
+
     return () => {
-      mounted = false;
-      supabase.removeChannel(ch);
+      isActive = false;
+      if (channelRef.current === channel) channelRef.current = null;
+      removeRealtimeChannel(channel);
     };
-  }, [placement, instanceId]);
+  }, [placement]);
 
   return { ads, loading };
 }
@@ -92,42 +128,60 @@ export function useAds(placement?: AdPlacement) {
 export function useSponsoredBusinesses() {
   const [items, setItems] = useState<SponsoredBusiness[]>([]);
   const [loading, setLoading] = useState(true);
-  const instanceId = useId();
+  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
 
   useEffect(() => {
-    let mounted = true;
+    let isActive = true;
+
     const load = async () => {
-      const { data } = await supabase
-        .from("sponsored_businesses")
-        .select("*")
-        .order("priority", { ascending: false });
-      if (!mounted) return;
-      const now = Date.now();
-      setItems(
-        ((data ?? []) as SponsoredBusiness[]).filter(
-          (b) =>
-            b.is_active &&
-            new Date(b.starts_at).getTime() <= now &&
-            (!b.ends_at || new Date(b.ends_at).getTime() > now),
-        ),
-      );
-      setLoading(false);
+      try {
+        const { data, error } = await supabase
+          .from("sponsored_businesses")
+          .select("*")
+          .order("priority", { ascending: false });
+        if (error) throw error;
+        if (!isActive) return;
+        const now = Date.now();
+        setItems(
+          ((data ?? []) as SponsoredBusiness[]).filter(
+            (b) =>
+              b.is_active &&
+              new Date(b.starts_at).getTime() <= now &&
+              (!b.ends_at || new Date(b.ends_at).getTime() > now),
+          ),
+        );
+      } catch (error) {
+        if (isActive) console.error("Failed to load sponsored businesses", error);
+      } finally {
+        if (isActive) setLoading(false);
+      }
     };
-    load();
-    const channelName = `sponsored-live:${instanceId}`;
-    const ch = supabase
+
+    void load();
+    removeRealtimeChannel(channelRef.current);
+
+    const channelName = createRealtimeChannelName("sponsored-live", "all");
+    const channel = supabase
       .channel(channelName)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "sponsored_businesses" },
-        load,
+        () => void load(),
       )
-      .subscribe();
+      .subscribe((status, error) => {
+        if (status === "CHANNEL_ERROR" && isActive) {
+          console.error(`Realtime sponsored channel failed: ${channelName}`, error);
+        }
+      });
+
+    channelRef.current = channel;
+
     return () => {
-      mounted = false;
-      supabase.removeChannel(ch);
+      isActive = false;
+      if (channelRef.current === channel) channelRef.current = null;
+      removeRealtimeChannel(channel);
     };
-  }, [instanceId]);
+  }, []);
 
   return { items, loading };
 }
