@@ -1,78 +1,86 @@
-# Bagalkot City Hub — Premium City Directory
+# Hyperlocal City Platform — Phase 1 (Bagalkot)
 
-A startup-grade city portal built as a single-page experience with smooth scrolling between sections, glassmorphism cards, and a refined dark-blue + gold identity.
+Turn Bagalkot City Hub into a location-aware platform that personalizes the homepage by taluka, with a "Coming Soon" experience for users outside the district. Architecture is built to scale to more districts/states/countries later.
 
-## Design Direction
+## What the user will see
 
-- **Palette**: Deep navy background (`#0A1633` / `#0F1E45`), crisp white text, warm gold accents (`#D4AF37` / `#F1C76A`) for highlights, ratings, and CTAs.
-- **Style**: Glassmorphism (frosted blur cards with subtle white borders), soft layered shadows, generous whitespace, rounded-2xl corners.
-- **Typography**: Playfair Display for headings (editorial, premium feel) + Inter for body (clean, legible).
-- **Motion**: Subtle fade-in + slide-up on scroll, hover lift on cards, gold underline grow on links, smooth section transitions.
-- **Mobile-first**: Single-column stacking, bottom-anchored search on hero, hamburger menu, touch-friendly tap targets.
+1. On first visit, a slim location bar prompts: **Use my location** / **Choose city manually**.
+2. After permission (or manual choice), the homepage re-skins to that taluka:
+   - Hero image + name + tagline of their taluka
+   - "Nearby businesses" sorted by distance (when GPS available)
+   - Local listings, sponsored businesses, news, events filtered to that area
+   - A persistent "Location chip" in the navbar with a quick switcher
+3. If the detected location is **outside Bagalkot district**: a "Coming Soon to {City}" hero with a waitlist email form and a small preview of demo businesses.
+4. Manual override always available; choice is remembered in localStorage.
 
-## Page Structure (single-page, anchor nav)
+## Supported Phase 1 talukas
 
-**1. Sticky Glass Navbar**
-- Logo "Bagalkot City Hub" with gold accent dot
-- Links: Home · Categories · Featured · News · Submit · Contact
-- Mobile: hamburger drawer
+Bagalkot, Badami, Bilagi, Hunagund, Jamkhandi, Mudhol, Rabkavi Banhatti, Ilkal. (Already modeled in `src/data/talukas.ts` — we'll reuse those slugs, images, and metadata.)
 
-**2. Hero Section**
-- Full-bleed Bagalkot cityscape image with navy gradient overlay
-- Headline: *"Discover Bagalkot"* (serif, white) with *"Everything in One Place"* (gold script accent)
-- Subtext: short welcoming line
-- Prominent **glass search bar** with input + location dropdown (areas of Bagalkot: Vidyagiri, Navanagar, Mahakuta Rd, etc.) + gold "Search" button
-- Quick stats row: "500+ Listings · 50+ Categories · 10k+ Users"
+## Technical plan
 
-**3. Categories Grid**
-- Section heading "Explore by Category"
-- 5 glass cards in responsive grid (2-col mobile, 5-col desktop): Restaurants, Gyms, Services, Jobs, Events
-- Each card: lucide icon in gold circle, name, count ("120+ places"), hover lift + gold border glow
+### 1. Location service (`src/lib/location.ts`)
+- `requestBrowserLocation()` — wraps `navigator.geolocation.getCurrentPosition` with timeout + error states.
+- `reverseGeocode(lat, lng)` — calls Google Maps Geocoding via the Lovable Google Maps connector (server-side through the gateway, called from an edge function so we never expose keys). Returns `{ country, state, district, taluka, city }`.
+- `resolveTaluka(geocodeResult)` — maps the geocoded district/locality to one of our 8 supported taluka slugs. Falls back to nearest-by-distance using taluka centroids if name match fails.
+- `haversineKm(a, b)` — distance helper for sorting nearby businesses.
 
-**4. Featured Listings**
-- "Featured in Bagalkot" heading + "View all" link
-- 6 listing cards (3-col grid desktop, 1-col mobile): cover image, category badge, name, ⭐ rating + review count, 📍 location/area, short tagline
-- Glass card with bottom gradient on image, hover scale
+### 2. Edge function: `geocode`
+- Input: `{ lat, lng }` (or `{ query }` for manual search).
+- Calls Google Maps Geocoding API via `connector-gateway.lovable.dev/google_maps`.
+- Returns normalized address components + a resolved taluka slug (or `null` if out of district).
+- Public (no auth required), rate-limited by IP via a simple in-memory check.
 
-**5. Latest Updates / News**
-- Section heading "Latest Updates"
-- 3 news cards: thumbnail, date chip, category tag, title, 2-line excerpt, "Read more" with arrow
-- Mix of city events, civic updates, business openings
+### 3. Database (migration)
 
-**6. Business Submission Form**
-- Two-column layout (stacks on mobile): left = pitch ("List Your Business — Reach Thousands"), benefits bullets with gold checkmarks; right = glass form card
-- Fields: Business Name, Category (select), Owner Name, Phone, Email, Area, Short Description, Upload note
-- Zod-validated inputs with inline errors, gold "Submit Listing" button, success toast on submit
-- (Form stores submission in local state and shows confirmation — no backend in this version)
+- `taluka_centroids` (seed table)
+  - `slug`, `name`, `lat`, `lng`, `bbox` — used for nearest-taluka fallback and radius queries.
+- Extend `sponsored_businesses` with optional `lat`, `lng`, `taluka_slug` (nullable, backward compatible).
+- New table `waitlist_signups` for out-of-district users
+  - `email`, `city`, `state`, `country`, `lat`, `lng`, `created_at`.
+  - RLS: public INSERT only; admin SELECT.
+- New table `local_events` (optional, can be deferred) — for now reuse existing data.
 
-**7. Footer**
-- 4 columns (stack on mobile): Brand + tagline, Quick Links, Categories, Contact (address, phone, email)
-- Social icons: Facebook, Instagram, Twitter/X, YouTube (gold hover)
-- Bottom bar: copyright + "Made for Bagalkot"
+All new tables get explicit `GRANT`s and tight RLS.
 
-## Features
+### 4. React state — `LocationProvider`
+- New `src/hooks/useLocation.tsx` context exposing:
+  - `status`: `'idle' | 'detecting' | 'ready' | 'denied' | 'outside'`
+  - `coords`, `taluka` (slug), `manual` (bool), `address`
+  - `detect()`, `setTaluka(slug)`, `clear()`
+- Persists chosen taluka to `localStorage` (`bch.location.v1`).
+- Wraps the app in `App.tsx` (inside `AuthProvider`).
 
-- **Search bar** in hero with text + area filter (filters featured listings on submit, smooth scroll to results)
-- **Location filter** — dropdown of Bagalkot localities used in both hero search and featured section
-- **Smooth scroll** between anchored sections
-- **Scroll-triggered animations** (fade-up via Intersection Observer) on each section
-- **Hover micro-interactions** on cards, buttons, nav links
-- **Fast loading** — optimized image, no heavy libraries, lazy-load listing images, single page
+### 5. UI components
 
-## Technical Notes
+- `LocationBar` — sticky thin bar under the navbar; shows current taluka, "Change" button, or "Detect my location" if idle.
+- `LocationModal` — shadcn dialog with: Detect button, manual taluka grid (the 8 taluka cards), search input.
+- `CityHero` — replaces the static `Hero` when a taluka is selected; pulls image + tagline from `talukas.ts`.
+- `NearbyBusinesses` — new section that sorts `FEATURED_LISTINGS` + `sponsored_businesses` by distance when GPS available, else by area match.
+- `ComingSoonHero` + `WaitlistForm` — shown when user is geolocated outside Bagalkot district.
+- Existing `FeaturedListings`, `News`, `SponsoredSection` — receive a `talukaSlug` prop and filter accordingly (with graceful fallback to current behavior when no location).
 
-- Update `index.css` and `tailwind.config.ts`: add HSL tokens for navy, gold, glass surfaces; add Playfair + Inter via Google Fonts in `index.html`; add fade-up / slide-up keyframes; add `.glass` and `.glass-strong` utility classes.
-- Generate one AI hero image (Bagalkot-style Indian cityscape, dusk, warm tones) and several listing/news placeholder images.
-- New components: `Navbar`, `Hero`, `SearchBar`, `Categories`, `FeaturedListings`, `ListingCard`, `News`, `NewsCard`, `SubmitForm`, `Footer`, `SectionHeading`.
-- Replace `src/pages/Index.tsx` placeholder with composed sections.
-- Listings, categories, and news data live in a typed `src/data/` module (mock data) for easy future swap to a real backend.
-- Form validation with `zod` + `react-hook-form` (already available via shadcn). Toast feedback via existing sonner.
-- Lucide icons throughout. All colors via semantic tokens — no hardcoded hex in components.
+### 6. Routing & SEO
+- Existing `/taluka/:slug` page already exists — we'll link the LocationBar's "View full city page" CTA to it and ensure the homepage `<title>` and meta description update based on selected taluka (via a small `useDocumentMeta` helper).
+- Add JSON-LD `Place` schema on the taluka pages.
 
-## Out of Scope (for this build)
+### 7. Out of scope for this phase
+- Marketplace (OLX-style listings), Jobs board, Emergency contacts directory — these are large standalone features. We'll stub UI sections with "Coming soon in your area" cards and ship them in a follow-up.
+- Real business owner uploads with lat/lng — admins can edit `sponsored_businesses` lat/lng manually for now; a public submission flow with map picker is a follow-up.
 
-- Real backend / database for listings & submissions (mock data only)
-- User authentication
-- Listing detail pages (cards are visual; "View" links scroll/toast for now)
+## Secrets needed
+- Google Maps connector — I'll connect it before building the geocode edge function. No manual API keys required from you; the managed connector handles it on `*.lovable.app`.
 
-If you'd like any of those added, we can do it as a follow-up.
+## Build order
+1. Connect Google Maps connector + create `geocode` edge function.
+2. DB migration (taluka_centroids, waitlist_signups, sponsored_businesses columns).
+3. `LocationProvider` + `useLocation` hook + localStorage persistence.
+4. `LocationBar` + `LocationModal` UI.
+5. `CityHero` swap on homepage + filter existing sections by taluka.
+6. `NearbyBusinesses` distance-sorted section.
+7. `ComingSoonHero` + waitlist flow for out-of-district visitors.
+8. Polish, mobile pass, SEO meta updates.
+
+## Open questions (will ask after approval if needed)
+- Do you want the location prompt to appear automatically on first visit, or only when the user clicks "Locate Me"? (Auto-prompt converts better but feels pushier.)
+- For the waitlist, just email — or also name + which city they want next?
