@@ -14,6 +14,12 @@ export const LocationModal = ({ open, onOpenChange }: Props) => {
   const { detect, setTaluka, status, error, taluka } = useLocation();
   const [q, setQ] = useState("");
 
+  // Close modal when detection successfully resolves to a supported taluka
+  useEffect(() => {
+    if (open && status === "ready") onOpenChange(false);
+  }, [status, open, onOpenChange]);
+
+
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     if (!needle) return TALUKAS;
