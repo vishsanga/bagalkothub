@@ -37,10 +37,7 @@ export const LocationModal = ({ open, onOpenChange }: Props) => {
         <button
           type="button"
           onClick={async () => {
-            const success = await detect();
-            if (success) {
-              onOpenChange(false);
-            }
+            await detect();
           }}
           disabled={detecting}
           className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-gold px-5 py-3 text-sm font-semibold text-gold-foreground shadow-gold disabled:opacity-70"
