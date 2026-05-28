@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
+import { LocationProvider } from "@/hooks/useLocation";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -21,21 +22,23 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/taluka/:slug" element={<TalukaPage />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/unauthorized" element={<Unauthorized />} />
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute requireAdmin>
-                  <Admin />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <LocationProvider>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/taluka/:slug" element={<TalukaPage />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/unauthorized" element={<Unauthorized />} />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <Admin />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </LocationProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
