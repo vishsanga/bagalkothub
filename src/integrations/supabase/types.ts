@@ -133,6 +133,8 @@ export type Database = {
           id: string
           image_url: string
           is_active: boolean
+          lat: number | null
+          lng: number | null
           name: string
           priority: number
           rating: number
@@ -140,6 +142,7 @@ export type Database = {
           reviews: number
           starts_at: string
           tagline: string | null
+          taluka_slug: string | null
           updated_at: string
         }
         Insert: {
@@ -150,6 +153,8 @@ export type Database = {
           id?: string
           image_url: string
           is_active?: boolean
+          lat?: number | null
+          lng?: number | null
           name: string
           priority?: number
           rating?: number
@@ -157,6 +162,7 @@ export type Database = {
           reviews?: number
           starts_at?: string
           tagline?: string | null
+          taluka_slug?: string | null
           updated_at?: string
         }
         Update: {
@@ -167,6 +173,8 @@ export type Database = {
           id?: string
           image_url?: string
           is_active?: boolean
+          lat?: number | null
+          lng?: number | null
           name?: string
           priority?: number
           rating?: number
@@ -174,7 +182,52 @@ export type Database = {
           reviews?: number
           starts_at?: string
           tagline?: string | null
+          taluka_slug?: string | null
           updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsored_businesses_taluka_slug_fkey"
+            columns: ["taluka_slug"]
+            isOneToOne: false
+            referencedRelation: "taluka_centroids"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      taluka_centroids: {
+        Row: {
+          country: string
+          created_at: string
+          district: string
+          lat: number
+          lng: number
+          name: string
+          radius_km: number
+          slug: string
+          state: string
+        }
+        Insert: {
+          country?: string
+          created_at?: string
+          district?: string
+          lat: number
+          lng: number
+          name: string
+          radius_km?: number
+          slug: string
+          state?: string
+        }
+        Update: {
+          country?: string
+          created_at?: string
+          district?: string
+          lat?: number
+          lng?: number
+          name?: string
+          radius_km?: number
+          slug?: string
+          state?: string
         }
         Relationships: []
       }
@@ -196,6 +249,42 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      waitlist_signups: {
+        Row: {
+          city: string | null
+          country: string | null
+          created_at: string
+          email: string
+          id: string
+          lat: number | null
+          lng: number | null
+          state: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          state?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          state?: string | null
+          user_agent?: string | null
         }
         Relationships: []
       }
